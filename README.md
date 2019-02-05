@@ -1,4 +1,8 @@
-# flutter_sound
+# willow_flutter_sound
+
+### Typical commands for running and publising libraries
+flutter packages pub publish --dry-run
+flutter packages pub publish
 
 <img src="https://raw.githubusercontent.com/dooboolab/flutter_sound/master/Logotype primary.png" width="70%" height="70%" />
 

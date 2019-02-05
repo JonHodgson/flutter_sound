@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 
 class FlutterSound {
-  static const MethodChannel _channel = const MethodChannel('flutter_sound');
+  static const MethodChannel _channel = const MethodChannel('willow_flutter_sound');
   static StreamController<RecordStatus> _recorderController;
   static StreamController<double> _dbPeakController;
   static StreamController<PlayStatus> _playerController;

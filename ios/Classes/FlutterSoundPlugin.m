@@ -115,7 +115,7 @@ NSString* status = [NSString stringWithFormat:@"{\"current_position\": \"%@\"}",
 
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
   FlutterMethodChannel* channel = [FlutterMethodChannel
-      methodChannelWithName:@"flutter_sound"
+      methodChannelWithName:@"willow_flutter_sound"
             binaryMessenger:[registrar messenger]];
   FlutterSoundPlugin* instance = [[FlutterSoundPlugin alloc] init];
   [registrar addMethodCallDelegate:instance channel:channel];

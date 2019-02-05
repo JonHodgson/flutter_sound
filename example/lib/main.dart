@@ -3,7 +3,7 @@ import 'package:intl/intl.dart' show DateFormat;
 
 import 'dart:io';
 import 'dart:async';
-import 'package:flutter_sound/flutter_sound.dart';
+import 'package:flutter_sound/willow_flutter_sound.dart';
 
 void main() {
   runApp(new MyApp());

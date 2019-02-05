@@ -47,7 +47,7 @@ public class FlutterSoundPlugin implements MethodCallHandler, PluginRegistry.Req
 
   /** Plugin registration. */
   public static void registerWith(Registrar registrar) {
-    channel = new MethodChannel(registrar.messenger(), "flutter_sound");
+    channel = new MethodChannel(registrar.messenger(), "willow_flutter_sound");
     channel.setMethodCallHandler(new FlutterSoundPlugin());
     reg = registrar;
   }
@@ -144,7 +144,7 @@ public class FlutterSoundPlugin implements MethodCallHandler, PluginRegistry.Req
       this.model.setMediaRecorder(new MediaRecorder());
       this.model.getMediaRecorder().setAudioSource(MediaRecorder.AudioSource.MIC);
       this.model.getMediaRecorder().setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-      this.model.getMediaRecorder().setAudioEncoder(MediaRecorder.AudioEncoder.DEFAULT);
+      this.model.getMediaRecorder().setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
       this.model.getMediaRecorder().setAudioChannels(numChannels);
       this.model.getMediaRecorder().setAudioSamplingRate(sampleRate);
       this.model.getMediaRecorder().setOutputFile(path);
