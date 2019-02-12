@@ -1,6 +1,8 @@
 #import "FlutterSoundPlugin.h"
 #import <AVFoundation/AVFoundation.h>
 
+static void *audioContext = &audioContext;
+
 @implementation FlutterSoundPlugin{
   NSURL *audioFileURL;
   AVAudioRecorder *audioRecorder;
@@ -35,6 +37,7 @@ FlutterMethodChannel* _channel;
         [timer invalidate];
         timer = nil;
     }
+    [self cleanUpAudioPlayer];
 }
 
 - (void)updateRecorderProgress:(NSTimer*) timer
@@ -52,12 +55,12 @@ NSString* status = [NSString stringWithFormat:@"{\"current_position\": \"%@\"}",
   [_channel invokeMethod:@"updateRecorderProgress" arguments:status];
 }
 
-- (void)updateProgress:(NSTimer*) timer
+- (void)updateProgress:(NSTimer *)timer
 {
   NSNumber *duration = [NSNumber numberWithDouble:audioPlayer.duration * 1000];
   NSNumber *currentTime = [NSNumber numberWithDouble:audioPlayer.currentTime * 1000];
 
-  if ([duration intValue] == 0 && timer != nil) {
+  if ([duration intValue] == 0 && audioPlayer.currentTime == audioPlayer.duration) {
     [self stopTimer];
     return;
   }
@@ -100,6 +103,15 @@ NSString* status = [NSString stringWithFormat:@"{\"current_position\": \"%@\"}",
                                            userInfo:nil
                                            repeats:YES];
   });
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    if (context == audioContext) {
+        [self updateProgress: timer];
+    } else {
+        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+    }
 }
 
 - (void)startDbTimer
@@ -284,6 +296,14 @@ NSString* status = [NSString stringWithFormat:@"{\"current_position\": \"%@\"}",
         error: nil];
 
     [audioPlayer play];
+      NSMutableDictionary *change = [[NSMutableDictionary alloc] init];
+      [change setObject:@(NSKeyValueObservingOptionNew) forKey:NSKeyValueChangeNewKey];
+      
+      //Add a KVO observer to the audio player's current time
+      [self observeValueForKeyPath:NSStringFromSelector(@selector(currentTime))
+                                 ofObject:audioPlayer
+                                   change:change
+                                  context:audioContext];
     [self startTimer];
 
     NSString *filePath = audioFileURL.absoluteString;
@@ -297,8 +317,7 @@ NSString* status = [NSString stringWithFormat:@"{\"current_position\": \"%@\"}",
         [timer invalidate];
         timer = nil;
     }
-    [audioPlayer stop];
-    audioPlayer = nil;
+      [self cleanUpAudioPlayer];
     result(@"stop play");
   } else {
     result([FlutterError
@@ -306,6 +325,13 @@ NSString* status = [NSString stringWithFormat:@"{\"current_position\": \"%@\"}",
         message:@"player is not set"
         details:nil]);
   }
+}
+
+- (void) cleanUpAudioPlayer {
+  //  [audioPlayer removeObserver:self forKeyPath:NSStringFromSelector(@selector(currentTime)) context:audioContext];
+    [audioPlayer stop];
+    audioPlayer = nil;
+
 }
 
 - (void)pausePlayer:(FlutterResult)result {
